@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 import random
 
+# 깃 연동
+
 # 이미지 처리 로드하는 함수
 def load_image(image_file) :
     img = Image.open(image_file)
