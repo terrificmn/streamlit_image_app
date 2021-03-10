@@ -83,7 +83,7 @@ def main():
         #     st.image(img)
 
 
-        user_option = ['선택하세요.', 'Show Image', 'Rotate Image', 'Create Thumbnail', 'Crop Image', 'Flip Image', 'Color Change']
+        user_option = ['선택하세요.', 'Show Image', 'Rotate Image', 'Create Thumbnail', 'Crop Image', 'Flip Image', 'Color Change', 'Color Enhancement']
         user_option = st.selectbox('옵션을 선택하세요.', user_option)
         
         if user_option == '선택하세요':
@@ -176,21 +176,27 @@ def main():
                         st.image(cropped_img)
 
         elif user_option == 'Flip Image':
-            status = st.radio('플립 선택', ['수직(위/아래)로 뒤집기', '수평으로(왼쪽/오른쪽) 뒤집기'] )
+            status = st.radio('플립 선택', ['수직(위/아래)로 뒤집기', '수평으로 뒤집기'] )
 
             #저장하기 위한 리스트 만들기
             
             if status == '수직(위/아래)로 뒤집기':
                 transformed_img_list = []
                 for img in image_list:
+                    st.text('원본 사진')
+                    st.image(img)
                     flipped_img = img.transpose( Image.FLIP_TOP_BOTTOM)
+                    st.text('바뀐 사진')
                     st.image(flipped_img)
                     transformed_img_list.append(flipped_img)
-            elif status == '수평으로(왼쪽/오른쪽) 뒤집기':
-                
+
+            elif status == '수평으로 뒤집기':
                 transformed_img_list = []
                 for img in image_list:
+                    st.text('원본 사진')
+                    st.image(img)
                     flipped_img = img.transpose( Image.FLIP_LEFT_RIGHT)
+                    st.text('바뀐 사진')
                     st.image(flipped_img)
                     transformed_img_list.append(flipped_img)
 
@@ -199,27 +205,36 @@ def main():
                 for img in transformed_img_list:
                     save_uploaded_file(directory, img)      
 
+        # color 보정하기
+        elif user_option == 'Color Enhancement':
+            filter_list = ['Sharpen', 'Edge Enhance', 'Contrast Image' ]
+            enhancement_option = st.radio('플립 선택', filter_list )
+            # 저장시킬 이미지를 위한 리스트 
+            transformed_img_list = []
 
+            if  enhancement_option == 'Sharpen':
+                for img in image_list:
+                    sharp_img = img.filter(ImageFilter.SHARPEN)
+                    st.image(sharp_img)
+                    transformed_img_list.append(sharp_img)
 
-        elif user_option == 'Color Change':
-            color_list = ['Color', 'Gray', 'Black&White']
+            elif enhancement_option == 'Edge Enhance':
+                for img in image_list:
+                    edged_img = img.filter(ImageFilter.EDGE_ENHANCE)
+                    st.image(edged_img)
+                    transformed_img_list.append(edged_img)
 
-            status = st.radio( '바꾸고 싶은 색을 선택해 주세요', color_list)
+            elif enhancement_option == 'Contrast Image':
+                for img in image_list:
+                    contrast_img = ImageEnhance.Contrast(img).enhance(2)
+                    st.image(contrast_img)
+                    transformed_img_list.append(contrast_img)
 
-            if status == 'Color':
-                bw = img.convert('RGB') 
-                
-            elif status == 'Gray':
-                bw = img.convert('L')
-                
-            else :
-                bw = img.convert('1')
+            directory = st.text_input('파일 경로 입력하세요')
+            if st.button('저장하기'):
+                for img in transformed_img_list:
+                    save_uploaded_file(directory, img)  
 
-            
-
-            if bw is not None:
-                st.image(bw)
-                
 
 
 #         # start_x = st.number_input('시작 x 좌표', 0, img.size[0]-1)
